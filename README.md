@@ -12,6 +12,7 @@ data, validation, calculations, and decisions. Real data for recommendations.
 Transparency when data is uncertain. Best value for the user — not merely
 cheapest or fastest.
 
+Note: Removed API Key by Default
 ---
 
 ## Quick start
