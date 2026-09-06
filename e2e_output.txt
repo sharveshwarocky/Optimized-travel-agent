@@ -1,0 +1,69 @@
+E2E prompt: We are 3 people travelling from Chennai to Bangalore tomorrow. We have ₹6000 total, prefer AC and 
+comfort, and need to reach before 7 PM. We don't mind spending a little extra if the time saved is actually 
+worth it.
+• Updated comfort priority from medium to high.
+• Updated urgency from low to medium.
+fallback used: True | llm: ok
+                                           Data confidence by mode                                            
+┏━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Mode    ┃ Status         ┃ Detail                                                                          ┃
+┡━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ train   │ 🟢 data found  │ 9 train options from erail (live)                                               │
+│ bus     │ 🔴 unavailable │ No bus source passed the research gate (2026-09-06): abhibus is JS-rendered     │
+│         │                │ with no discov                                                                  │
+│ flight  │ 🔴 unavailable │ skiplagged unhealthy: GET                                                       │
+│         │                │ https://skiplagged.com/api/search.php?from=MAA&to=BLR&departDate                │
+│ own car │ 🟢 data found  │ own car computed: 327.3 km, ₹2948 (fuel+tolls)                                  │
+│ cab     │ 🟠 data found  │ cab estimates for 327.3 km (🟠 estimated, D17)                                  │
+│ rental  │ 🟠 data found  │ rental estimates for 327.3 km (🟠 estimated, D17)                               │
+└─────────┴────────────────┴─────────────────────────────────────────────────────────────────────────────────┘
+╭───────────────────────────── 🥇 BEST OVERALL: Own car — Chennai to Bangalore ──────────────────────────────╮
+│ Total cost: ₹2,948  ·  Per person: ₹983 (3 travellers)                                                     │
+│ Journey: 4h 08m  ·  Door-to-door: ≈ 5h 14m                                                                 │
+│ Comfort: 6/10  ·  AC: yes  ·  Data: 🟢 live (source: computed:osrm+goodreturns)                            │
+│                                                                                                            │
+│ Why it is recommended:                                                                                     │
+│   • Lowest total cost at ₹2,948, leaving the most room (₹3,052 unused) from the ₹6,000 budget — best value │
+│ for a flexible budget.                                                                                     │
+│   • Tied for fastest door-to-door time at 314 minutes (live data), comfortably ahead of the 19:00 arrival  │
+│ deadline.                                                                                                  │
+│   • AC included, matching the user's stated requirement, with private space for 3 passengers — aligns with │
+│ high comfort priority.                                                                                     │
+│   • Avoids chauffeured-cab costs (₹1,280 cheaper than the Hatchback cab) with no time penalty.             │
+│   • Live fuel (₹111.11/L) and toll (₹524) figures provide transparent, reliable cost estimates.            │
+╰────────────────────────────────────────────── score 81.2/100 ──────────────────────────────────────────────╯
+╭───────────────────────────────────── 🥉 Cab (Hatchback) — outstation ──────────────────────────────────────╮
+│ Score: 79.8/100 · 🟠 estimated · ₹4,228 · 4h 08m journey                                                   │
+│   + Same 314-min door-to-door time as the own-car option.                                                  │
+│   + AC and private space; no driving fatigue for the group.                                                │
+│   + Total ₹4,228 still leaves ₹1,772 within the ₹6,000 budget.                                             │
+│   − Costs ₹1,280 more than the own-car option with zero time saved.                                        │
+│   − Cost figure is estimated, not live.                                                                    │
+│   − Only comfort 6/10 — no real upgrade over driving yourself.                                             │
+│   ₹ Cab (Hatchback) — outstation: cheaper by 1,280₹ but 0.0 h slower — marginal                            │
+│   worth-it: Cab (Sedan) — outstation: cheaper by 654₹ but 0.0 h slower — marginal                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────── 3. Cab (Sedan) — outstation ────────────────────────────────────────╮
+│ Score: 79.0/100 · 🟠 estimated · ₹4,882 · 4h 08m journey                                                   │
+│   + Same 314-min door-to-door time as the top option.                                                      │
+│   + AC sedan comfort with private space for 3 passengers.                                                  │
+│   + Total ₹4,882 still fits within the ₹6,000 total budget.                                                │
+│   − ₹654 more than the Hatchback cab and ₹1,934 more than own car with no time benefit.                    │
+│   − Cost figure is estimated, not live.                                                                    │
+│   − Comfort score still 6/10 — no measurable upgrade.                                                      │
+│   ₹ Cab (Sedan) — outstation: cheaper by 654₹ but 0.0 h slower — marginal                                  │
+│   worth-it: Self-drive Hatchback (1 day): cheaper by 194₹ but 0.0 h slower — marginal                      │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────── Assumptions & estimates ──────────────────────────────────────────╮
+│ • 🟠 Cab (Hatchback) — outstation: ₹4,228 — formula estimate (D17), not a live quote                       │
+│ • 🟠 Cab (Sedan) — outstation: ₹4,882 — formula estimate (D17), not a live quote                           │
+│ • 🟠 Cab (SUV) — outstation: ₹6,191 — formula estimate (D17), not a live quote                             │
+│ • 🟠 Self-drive Hatchback (1 day): ₹5,076 — formula estimate (D17), not a live quote                       │
+│ • 🟠 Self-drive Sedan (1 day): ₹5,476 — formula estimate (D17), not a live quote                           │
+│ • 🟠 Self-drive SUV (1 day): ₹6,276 — formula estimate (D17), not a live quote                             │
+│ • 🔴 bus: No bus source passed the research gate (2026-09-06): abhibus is JS-rendered with no discoverable │
+│ endpoint; red                                                                                              │
+│ • 🔴 flight: skiplagged unhealthy: GET                                                                     │
+│ https://skiplagged.com/api/search.php?from=MAA&to=BLR&departDate=2026-10-06&format=v                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+LLM usage: 3 calls · 5368 tokens · 16.0s total
