@@ -1,9 +1,8 @@
-"""Bus adapter stub (gate doc: data_sources/adapters/abhibus_bus_source.md).
+"""Bus live-source stub (kept for gate history, D5 swap-friendliness).
 
-Both probed OTA sources failed the research gate at build time (JS-only shells;
-redbus.in unreachable). Per spec §3.3 the mode ships honestly 🔴 unavailable —
-no fabricated data. The interface stays open: drop in a working adapter later
-and the pipeline picks it up unchanged.
+The BusCollector now produces formula estimates (user decision), but this stub
+remains so a future live adapter can be dropped in and preferred by the
+collector — same pattern as the flight collector's live-first path.
 """
 from __future__ import annotations
 
@@ -18,10 +17,10 @@ class BusSourceStub(SourceAdapter):
     async def health_check(self) -> HealthReport:
         return HealthReport(
             source_id=self.id, healthy=False,
-            detail=("No bus source passed the research gate (2026-09-06): abhibus is "
+            detail=("No live bus source passed the research gate (2026-09-06): abhibus is "
                     "JS-rendered with no discoverable endpoint; redbus.in unreachable."))
 
     async def collect(self, req: TravelRequest) -> list[dict]:
         raise AdapterError(
-            "bus data unavailable: no source passed the research gate "
+            "live bus data unavailable: no source passed the research gate "
             "(see data_sources/adapters/abhibus_bus_source.md)")

@@ -1,6 +1,6 @@
 # Adapter Gate: abhibus.com / redbus.in (bus)
 
-Status: **FAIL at build time (2026-09-06) — mode ships 🔴 unavailable, adapter stub kept**
+Status: **FAIL at build time (2026-09-06) for live data — mode ships 🟠 formula estimates instead (user decision), adapter stub kept for when a scrapeable source is found**
 
 | # | Criterion | Finding |
 |---|-----------|---------|

@@ -61,11 +61,12 @@ async def build_plan(memory) -> ResearchPlan:
     if not tasks:
         return fallback
 
-    # never let the LLM drop the always-on modes (D16: own car always computed;
-    # cab/rental are local formulas — cheap to include, user ignores if irrelevant)
+    # never let the LLM drop modes (D16: own car always computed; cab/rental are
+    # local formulas; bus/flight have estimate fallbacks per user decision) —
+    # the only exclusions are modes the user explicitly avoided
     planned = {t.mode for t in tasks}
-    for mode in ("own_car", "cab", "rental"):
+    for mode in ALL_MODES:
         if mode not in planned and mode not in (req.avoided_modes or []):
             tasks.append(type(fallback.tasks[0])(mode=mode, priority=2,
-                         reason="always computed (D16/D17)"))
+                         reason="always researched (live or estimate fallback)"))
     return ResearchPlan(tasks=tasks, planned_by="llm")

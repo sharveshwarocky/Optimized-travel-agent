@@ -47,7 +47,7 @@ def _finalize(opt: TravelOption, req: TravelRequest, *, journey_minutes: int | N
     opt.door_to_door_breakdown = breakdown
 
     comfort, notes = comfort_model.comfort_for(
-        opt.mode, ac=opt.ac, sleeper=None,
+        opt.mode, ac=opt.ac, sleeper=bool(opt.sub_scores.get("_sleeper", False)),
         train_class=opt.sub_scores.get("_train_class"),
         duration_minutes=journey_minutes, stops=opt.stops,
         overnight=opt.overnight, elderly=req.elderly_travellers,
@@ -83,20 +83,45 @@ def train_option(raw: dict, req: TravelRequest, cls: str, fare: float) -> Travel
     return _finalize(opt, req, journey_minutes=raw["duration_minutes"])
 
 
-def flight_option(raw: dict, req: TravelRequest) -> TravelOption:
+def flight_option(raw: dict, req: TravelRequest, source: str = "skiplagged",
+                  data_type: str = "live", confidence: str = "high",
+                  baggage_note: str | None = None) -> TravelOption:
     opt = _base_option(req, mode="flight", name=raw["name"],
-                       source="skiplagged", data_type="live", confidence="high")
+                       source=source, data_type=data_type, confidence=confidence)
     opt.operator = raw.get("airline")
     opt.departure_time = raw["departure"]
     opt.arrival_time = raw["arrival"]
-    opt.travel_duration_minutes = raw["duration_minutes"]
+    opt.travel_duration_minutes = int(round(float(raw["duration_minutes"])))
     opt.overnight = (raw["arrival"].date() > raw["departure"].date())
-    opt.total_cost = round(raw["price_per_person"] * req.effective_passengers(), 2)
-    opt.cost_per_person = round(raw["price_per_person"], 2)
+    price_pp = float(raw["price_per_person"])
+    opt.total_cost = round(price_pp * req.effective_passengers(), 2)
+    opt.cost_per_person = round(price_pp, 2)
     opt.ac = True
     opt.stops = raw.get("stops", 0)
     opt.availability_status = None
-    return _finalize(opt, req, journey_minutes=raw["duration_minutes"])
+    opt.baggage_note = baggage_note
+    return _finalize(opt, req, journey_minutes=int(round(float(raw["duration_minutes"]))))
+
+
+def bus_option(raw: dict, req: TravelRequest) -> TravelOption:
+    """raw from bus estimator: per-seat fare × party, sleeper flag from source."""
+    opt = _base_option(req, mode="bus", name=raw["name"],
+                       source=raw["source"], data_type=raw["data_type"],
+                       confidence=raw["confidence"])
+    opt.operator = raw.get("operator")
+    opt.departure_time = raw["departure"]
+    opt.arrival_time = raw["arrival"]
+    opt.travel_duration_minutes = int(round(float(raw["duration_minutes"])))
+    opt.overnight = raw.get("overnight", False)
+    fare_pp = float(raw["price_per_person"])
+    opt.total_cost = round(fare_pp * req.effective_passengers(), 2)
+    opt.cost_per_person = round(fare_pp, 2)
+    opt.ac = raw.get("ac")
+    opt.stops = raw.get("stops", 0)
+    opt.availability_status = raw.get("availability_status")
+    opt.sub_scores = {"_sleeper": raw.get("sleeper", False)}
+    return _finalize(opt, req, journey_minutes=int(round(float(raw["duration_minutes"]))),
+                     extra_notes=list(raw.get("notes", [])))
 
 
 def road_option(raw: dict, req: TravelRequest, mode: str) -> TravelOption:
@@ -110,7 +135,6 @@ def road_option(raw: dict, req: TravelRequest, mode: str) -> TravelOption:
     opt.stops = 0
     opt.overnight = False
     notes = list(raw.get("notes", []))
-    opt.comfort_notes.extend(notes)
     opt.door_to_door_breakdown.update(raw.get("cost_breakdown", {}))
     return _finalize(opt, req, journey_minutes=raw["driving_minutes"],
                      driving_minutes=raw["driving_minutes"],
@@ -127,6 +151,8 @@ def normalize(raws: list[dict], req: TravelRequest, mode: str) -> list[TravelOpt
                     out.append(train_option(raw, req, cls, fare))
             elif mode == "flight":
                 out.append(flight_option(raw, req))
+            elif mode == "bus":
+                out.append(bus_option(raw, req))
             elif mode in ("own_car", "cab", "rental"):
                 out.append(road_option(raw, req, mode))
         except Exception:  # one malformed row never aborts the batch

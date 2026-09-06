@@ -1,6 +1,6 @@
 # Adapter Gate: skiplagged.com API (flight)
 
-Status: **PASS on parser / FAIL on live access from Python runtime (2026-09-06) — flights ship 🔴 unavailable live; parser + fixture tests retained**
+Status: **PASS on parser / FAIL on live access from Python runtime (2026-09-06) — collector tries live first, falls back to 🟠 formula estimates (user decision); parser + fixture tests retained for a future keyed API**
 
 | # | Criterion | Finding |
 |---|-----------|---------|

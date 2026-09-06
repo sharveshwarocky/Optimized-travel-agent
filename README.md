@@ -84,8 +84,8 @@ times, or availability. When a source is unreachable, the mode is reported
 | Mode | Source | Status |
 |---|---|---|
 | Train | erail.in public schedule/fare endpoint | 🟢 live — trains, times, days-of-run, per-class fares |
-| Bus | abhibus / redbus | 🔴 gate FAIL — JS-only shells; honest unavailable (adapter swappable) |
-| Flight | skiplagged API | 🔴 gate FAIL at runtime — Cloudflare TLS-fingerprint challenge (parser + fixtures retained) |
+| Bus | abhibus / redbus | 🟠 formula estimates (D17-pattern) — live sources are JS-only shells; estimator wires in, adapters swappable |
+| Flight | skiplagged API + formula fallback | 🟠 formula estimates — live API works via curl but serves Cloudflare TLS-fingerprint challenges to Python; collector tries live first, falls back to 🟠 estimates (parser + fixtures retained) |
 | Own car | OSRM routing + goodreturns fuel + blended toll table | 🟢 live computation (fuel+tolls, D16: always computed) |
 | Cab | formula (D17): km × per-km band + driver allowance + tolls | 🟠 estimated |
 | Rental | formula (D17): daily rate × days + fuel + tolls | 🟠 estimated |
@@ -97,7 +97,7 @@ Gate details per source: `data_sources/adapters/*.md`.
 ## Testing
 
 ```bash
-pytest            # 90 tests: engines, models, memory, utils + recorded-fixture parser tests
+pytest            # 100 tests: engines, models, memory, utils, estimators + recorded-fixture parser tests
 ```
 
 - **Unit** — constraint/scoring/worth-it engines, comfort model, door-to-door,
@@ -115,10 +115,11 @@ pytest            # 90 tests: engines, models, memory, utils + recorded-fixture 
 Extraction: 3 passengers · Chennai→Bangalore · tomorrow · ₹6,000 total ·
 AC + high comfort · arrive before 19:00 (LLM + regex fallback merged; one
 override spoken). Collection: train 🟢 9 live options (erail), own car 🟢
-(327.3 km via OSRM, fuel ₹111.11/L live, tolls ₹524), cab 🟠/rental 🟠
-estimates, bus 🔴 and flight 🔴 honestly unavailable. Recommendation: own car
+(327.3 km via OSRM, fuel ₹111.11/L live, tolls ₹524), bus 🟠 / flight 🟠 /
+cab 🟠 / rental 🟠 formula estimates (every 🟠 value called out in the
+assumptions box). Recommendation: own car
 ₹2,948 total (₹983/person), 4h08m journey, meets deadline, score 81/100 —
-with grounded worth-it lines vs cab (+₹1,280 for zero time saved) and train
+with grounded worth-it lines vs cab and train
 alternatives. Full transcript: `e2e_output.txt`.
 
 ---

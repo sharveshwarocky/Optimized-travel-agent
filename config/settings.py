@@ -86,6 +86,40 @@ RENTAL_EXTRA_PER_KM = 12.0
 RENTAL_NOTE = ("Self-drive daily bands with 300 km/day included; last verified 2026-09. "
                "Always 🟠 estimated (D17).")
 
+# ---------------- Bus estimates (D17-pattern: formula, always 🟠) ----------------
+# Per-seat-per-km bands; last verified 2026-09 from published fare ranges of
+# major AC sleeper operators on popular corridors. Always 🟠 estimated.
+BUS_CLASSES_PER_SEAT_PER_KM = {
+    "AC Sleeper": 1.55,
+    "AC Seater": 1.20,
+    "Non-AC Sleeper": 0.95,
+    "Non-AC Seater": 0.70,
+    "Volvo Multi-Axle": 1.85,
+}
+BUS_SPEED_KMH = 45.0                     # incl. stops/highway mix
+BUS_DEPARTURES = ["06:30", "15:00", "22:30"]   # morning / afternoon / night
+BUS_MIN_FARE = 250.0
+BUS_NOTE = ("Per-seat-km service bands; last verified 2026-09. Always 🟠 estimated (D17).")
+
+# ---------------- Flight estimates (D17-pattern: formula, always 🟠) ----------------
+# Short-haul economy bands by route distance; last verified 2026-09 from
+# published IndiGo/Air India Express baseline fares on trunk routes.
+FLIGHT_DISTANCE_BANDS = [
+    (0, 500, 3200.0),      # ≤500 km baseline one-way economy
+    (500, 1000, 4200.0),   # 500-1000 km
+    (1000, 1600, 5600.0),
+    (1600, 10**9, 7600.0),
+]
+FLIGHT_CARRIERS = ["IndiGo", "Air India Express", "Akasa Air"]
+FLIGHT_CARRIER_MULTIPLIERS = {"IndiGo": 1.0, "Air India Express": 0.95, "Akasa Air": 1.05}
+FLIGHT_DEPARTURES = ["07:30", "13:45", "19:20"]
+FLIGHT_TAXES_PCT = 0.12                  # levied on base band
+FLIGHT_MIN_MINUTES = 60
+FLIGHT_SPEED_KMH = 650.0
+FLIGHT_MAX_KM = 1600.0                   # beyond this, do not estimate (rail/car dominate)
+FLIGHT_NOTE = ("Distance-band carrier pricing incl. ~12% taxes; last verified 2026-09. "
+               "Always 🟠 estimated (D17).")
+
 # ---------------- Static reliability defaults (D12) ----------------
 RELIABILITY_DEFAULTS: dict[str, int] = {
     "train": 8, "bus": 6, "flight": 8, "own_car": 7, "cab": 6, "rental": 6,

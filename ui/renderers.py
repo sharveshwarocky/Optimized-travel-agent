@@ -98,6 +98,8 @@ def render_assumptions(result: PipelineResult, console) -> None:
             base = [k.replace("_assumed", "") for k in assumed]
             notes.append(f"🟡 {opt.name}: access legs assumed ({', '.join(base)}) — "
                          f"city-size default, not measured")
+    seen: set[str] = set()
+    notes = [n for n in notes if not (n in seen or seen.add(n))]  # options share names across departures
     if any(ms.status == "unavailable" for ms in result.mode_statuses):
         for ms in result.mode_statuses:
             if ms.status == "unavailable":
