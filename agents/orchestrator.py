@@ -142,6 +142,10 @@ async def run_pipeline(memory, relaxed_constraints: list[str] | None = None) -> 
     req = memory.request
     result = PipelineResult(relaxed_constraints=list(relaxed))
 
+    # ---- geo: fill coordinates for cities outside the curated table (§5) ----
+    from utils import geo
+    await geo.ensure_coords(req)
+
     # ---- planning ----
     plan = await build_plan(memory)
     result.planned_by = plan.planned_by

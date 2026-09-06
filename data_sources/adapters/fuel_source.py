@@ -49,19 +49,26 @@ class GoodreturnsFuelSource(SourceAdapter):
     async def petrol_price(self, city: LocationRef) -> Provenance:
         """₹/litre for the city as Provenance (never fabricated — falls back labeled)."""
         from utils.geo import _normalize  # local import to avoid cycle
+        tried: set[str] = set()
         slug = settings.FUEL_CITY_SLUGS.get(_normalize(city.city))
-        if slug:
+        if not slug:
+            # unmapped city: try the URL pattern directly (goodreturns uses
+            # hyphenated lowercase city slugs); 'vellore' → 'petrol-price-in-vellore.html'
+            slug = re.sub(r"[^a-z0-9]+", "-", _normalize(city.city)).strip("-")
+        candidates = [s for s in (slug,) if s and s not in tried]
+        for cand in candidates:
+            tried.add(cand)
             try:
                 resp = await polite_get(
-                    f"https://www.goodreturns.in/petrol-price-in-{slug}.html",
+                    f"https://www.goodreturns.in/petrol-price-in-{cand}.html",
                     host_key="www.goodreturns.in")
                 price = parse_fuel_price(resp.text)
                 if price:
-                    return Provenance(value=price, source=f"goodreturns:{slug}",
+                    return Provenance(value=price, source=f"goodreturns:{cand}",
                                       retrieved_at=utcnow(), data_type="live",
                                       confidence="high")
             except AdapterError:
-                pass
+                continue
         return Provenance(value=settings.FUEL_RECENT_FALLBACK_PER_LITRE,
                           source="settings-fallback", retrieved_at=utcnow(),
                           data_type="recent", confidence="medium")

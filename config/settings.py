@@ -28,6 +28,9 @@ LLM_TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT_SECONDS", "45"))
 LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 
 # ---------------- HTTP / scraping politeness (§17.8) ----------------
+# Geocoding fallback for cities outside the curated table + bundled station dir.
+# OSM Nominatim policy: ≤1 req/s, identify yourself, cache results (we do all three).
+NOMINATIM_GEOCODE = os.getenv("NOMINATIM_GEOCODE", "true").strip().lower() not in ("0", "false", "no", "off")
 HTTP_TIMEOUT_SECONDS = float(os.getenv("HTTP_TIMEOUT_SECONDS", "25"))
 COLLECTOR_TIMEOUT_SECONDS = float(os.getenv("COLLECTOR_TIMEOUT_SECONDS", "45"))
 REQUEST_DELAY_SECONDS = float(os.getenv("REQUEST_DELAY_SECONDS", "1.0"))  # between hits to same host

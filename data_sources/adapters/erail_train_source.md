@@ -13,4 +13,4 @@ Status: **PASS (primary train source)**
 
 **Data returned per train:** number, name, origin/destination, dep/arr times, duration, days-of-run (7-char bitmask), type (SUPERFAST/MAIL_EXPRESS/...), and an embedded fare blob with per-class fares (several class rows, 6 fare values each; class labels not encoded — row order is the adapter's inference, confidence `medium`).
 
-**Known gaps:** seat availability not exposed server-side without a separate JS/CAPTCHA flow → adapter sets `availability_status: null` (spec R2). Station codes resolved from a curated metro table in `utils/geo.py`; unknown cities → trains ship unavailable.
+**Known gaps:** seat availability not exposed server-side without a separate JS/CAPTCHA flow → adapter sets `availability_status: null` (spec R2). Station codes resolve via `utils/geo.py`: curated metro table → bundled national directory (`data_sources/stations/india_stations.json`, ~9,100 stations rebuilt from erail's public `/js/cmp/stations.js` via `scripts/build_station_db.py`) → unique-name containment; unknown cities then get Nominatim coordinates only (trains/flight-estimates ship unavailable for them).

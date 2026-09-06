@@ -18,6 +18,8 @@ class LocationRef(BaseModel):
     station_code: str | None = None      # e.g. "MAS", "SBC"
     airport_code: str | None = None      # IATA, e.g. "MAA", "BLR"
     bus_terminal: str | None = None
+    lat: float | None = None             # geocoded/table coords for road math
+    lon: float | None = None
     resolved: bool = False               # True once geo.py matched a known city
 
     def __str__(self) -> str:  # pragma: no cover - cosmetic

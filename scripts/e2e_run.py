@@ -4,7 +4,7 @@ Runs the real pipeline — LLM extraction (OpenRouter), live collectors
 (erail / skiplagged / OSRM / goodreturns + formula estimators), engines,
 renderers — without the interactive console, so it can be executed in one shot.
 
-Usage:  .venv/Scripts/python.exe scripts/e2e_run.py
+Usage:  .venv/Scripts/python.exe scripts/e2e_run.py ["your trip prompt"]
 """
 import asyncio
 import io
@@ -29,6 +29,9 @@ SUCCESS_PROMPT = (
     "We don't mind spending a little extra if the time saved is actually worth it."
 )
 
+# overridable: python scripts/e2e_run.py "2 people from Chennai to Kanyakumari tomorrow"
+CUSTOM_PROMPT = sys.argv[1] if len(sys.argv) > 1 else None
+
 FOLLOWUP_ANSWERS = ["3", "tomorrow"]  # stock answers if the agent needs follow-ups
 
 
@@ -36,8 +39,9 @@ async def main() -> None:
     console = Console(file=io.StringIO(), width=110, legacy_windows=False)
     memory = SessionMemory()
 
-    console.print(f"[bold]E2E prompt:[/bold] {SUCCESS_PROMPT}")
-    outcome = await extract_and_merge(memory, SUCCESS_PROMPT)
+    prompt = CUSTOM_PROMPT or SUCCESS_PROMPT
+    console.print(f"[bold]E2E prompt:[/bold] {prompt}")
+    outcome = await extract_and_merge(memory, prompt)
     for c in outcome.confirmations:
         console.print(f"[dim]• {c}[/dim]")
     console.print(f"[dim]fallback used: {outcome.fallback_used} | llm: {outcome.llm_error or 'ok'}[/dim]")

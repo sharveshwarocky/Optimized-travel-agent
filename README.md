@@ -84,6 +84,7 @@ times, or availability. When a source is unreachable, the mode is reported
 | Mode | Source | Status |
 |---|---|---|
 | Train | erail.in public schedule/fare endpoint | 🟢 live — trains, times, days-of-run, per-class fares |
+| City resolution | curated metro table + bundled erail national station dir (~9,100 stations) + OSM Nominatim geocoding fallback | any Indian rail-served town auto-resolves to its station code; coordinates for road math come from the table or Nominatim (`NOMINATIM_GEOCODE=false` to disable) |
 | Bus | abhibus / redbus | 🟠 formula estimates (D17-pattern) — live sources are JS-only shells; estimator wires in, adapters swappable |
 | Flight | skiplagged API + formula fallback | 🟠 formula estimates — live API works via curl but serves Cloudflare TLS-fingerprint challenges to Python; collector tries live first, falls back to 🟠 estimates (parser + fixtures retained) |
 | Own car | OSRM routing + goodreturns fuel + blended toll table | 🟢 live computation (fuel+tolls, D16: always computed) |
@@ -97,7 +98,7 @@ Gate details per source: `data_sources/adapters/*.md`.
 ## Testing
 
 ```bash
-pytest            # 100 tests: engines, models, memory, utils, estimators + recorded-fixture parser tests
+pytest            # 107 tests: engines, models, memory, utils, estimators + recorded-fixture parser tests
 ```
 
 - **Unit** — constraint/scoring/worth-it engines, comfort model, door-to-door,
